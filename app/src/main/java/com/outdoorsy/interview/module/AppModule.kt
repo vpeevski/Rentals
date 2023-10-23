@@ -1,5 +1,6 @@
 package com.outdoorsy.interview.module
 
+import com.outdoorsy.interview.api.OutdoorsyApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -8,6 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module
@@ -23,6 +25,10 @@ class AppModule {
         httpClient.addInterceptor(logging)
         return httpClient.build()
     }
+
+    @Provides
+    @Inject
+    fun provideApi(retrofit: Retrofit): OutdoorsyApi = retrofit.create(OutdoorsyApi::class.java)
 
     @Provides
     @Singleton

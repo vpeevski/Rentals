@@ -17,13 +17,13 @@ class RentalsPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Any> {
-        val limit = if (params.loadSize == 0) null else 20
+        val limit = if (params.loadSize == 0) null else 2
         val offset = (params.key ?: 0)
         val rentals = outdoorsyApi.fetchRentals(filter, limit, offset)
         return LoadResult.Page(
-            data = rentals,
+            data = rentals.data,
             prevKey = if (offset == 0) null else offset - params.loadSize,
-            nextKey = if (rentals.isEmpty()) null else offset + params.loadSize
+            nextKey = if (rentals.data.isEmpty()) null else offset + params.loadSize
         );
     }
 }

@@ -1,8 +1,19 @@
 package com.outdoorsy.interview
 
-import androidx.activity.ComponentActivity
+import android.os.Bundle
+import android.os.PersistableBundle
+import androidx.appcompat.app.AppCompatActivity
+import com.outdoorsy.interview.ui.RentalsFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.main_activity_layout)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_fragment_container, RentalsFragment())
+            .commit()
+    }
 }
