@@ -24,7 +24,7 @@ class RentalsPagingSource(
         rentals.data.forEach { rental ->
             val inclusion =
                 rentals.included.find { inclusion ->
-                    inclusion.id == rental.relationships.primaryImage.data.id &&
+                    inclusion.id == rental.relationships?.primaryImage?.data?.id &&
                             inclusion.type == "images"
                 }
             rental.primaryImageUrl = inclusion?.attributes?.url

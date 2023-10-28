@@ -5,12 +5,21 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Rental(
+data class Rental private constructor (
     val id: String,
     val attributes: RentAttributes,
-    val relationships: Relationships,
     var primaryImageUrl: String?
-) : Parcelable
+) : Parcelable {
+    var relationships: Relationships? = null
+    constructor(
+        id: String,
+        attributes: RentAttributes,
+        relationships: Relationships?,
+        primaryImageUrl: String?
+    ) : this(id, attributes, primaryImageUrl) {
+        this.relationships = relationships
+    }
+}
 
 @Parcelize
 data class RentAttributes(val name: String) : Parcelable
