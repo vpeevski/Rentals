@@ -1,3 +1,7 @@
 package com.outdoorsy.interview.rentals
 
-data class RentalsResponse(val data: List<Any>, val included: List<Any>)
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class RentalsResponse(val data: List<Rental>, val included: List<Inclusion>) : Parcelable

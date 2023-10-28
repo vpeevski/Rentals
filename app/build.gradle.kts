@@ -3,6 +3,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
+//    kotlin("plugin.serialization")
+    id("org.jetbrains.kotlin.plugin.parcelize")
 }
 
 android {
@@ -29,7 +31,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -44,8 +49,8 @@ android {
 dependencies {
     val retrofitVersion: String by rootProject.extra
     val pagingVersion: String by rootProject.extra
-    val lifecycleVersion : String by rootProject.extra
-    val composeVersion : String by rootProject.extra
+    val lifecycleVersion: String by rootProject.extra
+    val composeVersion: String by rootProject.extra
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
@@ -65,16 +70,16 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
     // Coroutine
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
     // Paging
     implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
     // optional - Jetpack Compose integration
     implementation("androidx.paging:paging-compose:3.3.0-alpha02")
 
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}")
-    implementation ("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
 
     val composeBom = platform("androidx.compose:compose-bom:2023.10.00")
     implementation(composeBom)
@@ -83,6 +88,11 @@ dependencies {
     // Choose one of the following:
     // Material Design 3
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+
 //    // or skip Material Design and build directly on top of foundational components
     implementation("androidx.compose.foundation:foundation")
     // or only import the main APIs for the underlying toolkit systems,
@@ -93,6 +103,8 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.8.0")
     // Optional - Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
 }
 
