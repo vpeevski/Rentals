@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -37,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,6 +65,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.outdoorsy.interview.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RentalsFragment : Fragment() {
@@ -89,7 +92,11 @@ class RentalsFragment : Fragment() {
     @Composable
     fun AppContent() {
         var filter by rememberSaveable { mutableStateOf("") }
-        val rentals = rentalsViewModel.rentalsPager.collectAsLazyPagingItems()
+        val coroutineScope = rememberCoroutineScope()
+//        coroutineScope.launch {
+        val rentals = remember { rentalsViewModel.rentalsPager }
+//        }
+        val collectedItems = rentals.collectAsLazyPagingItems()
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -121,7 +128,7 @@ class RentalsFragment : Fragment() {
                     })
             }
 
-            if (rentals.loadState.refresh is LoadState.Loading) {
+            if (collectedItems.loadState.refresh is LoadState.Loading) {
                 Box(
                     Modifier.fillMaxHeight().weight(1f),
                     contentAlignment = Alignment.Center
@@ -134,10 +141,10 @@ class RentalsFragment : Fragment() {
                     verticalArrangement = Arrangement.Center
                 ) {
                     items(
-                        count = rentals.itemCount,
-                        key = rentals.itemKey { it }
+                        count = collectedItems.itemCount,
+                        key = collectedItems.itemKey { it }
                     ) { rentalIndex ->
-                        val rental = rentals[rentalIndex]
+                        val rental = collectedItems[rentalIndex]
                         rental?.id?.let {
                             AnimatedVisibility(
                                 visible = cardVisible,
@@ -148,6 +155,7 @@ class RentalsFragment : Fragment() {
                                     modifier = Modifier
                                         .background(MaterialTheme.colorScheme.primaryContainer)
                                         .fillMaxWidth()
+                                        .wrapContentHeight(align = Alignment.CenterVertically)
                                         .padding(10.dp)
                                         .animateItemPlacement(
                                             animationSpec = tween(
@@ -161,7 +169,7 @@ class RentalsFragment : Fragment() {
                                     )
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(10.dp),
+                                        modifier = Modifier.padding(10.dp).fillMaxHeight(),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         AsyncImage(

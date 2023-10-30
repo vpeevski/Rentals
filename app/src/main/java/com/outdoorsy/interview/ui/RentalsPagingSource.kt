@@ -19,8 +19,7 @@ class RentalsPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Rental> {
         val limit = if (params.loadSize == 0) null else params.loadSize
-        val offset = (params.key ?: 0)
-        val rentals = outdoorsyApi.fetchRentals(filter, limit, offset)
+        val offset = (params.key ?: 0) val rentals = outdoorsyApi.fetchRentals(filter, limit, offset)
         rentals.data.forEach { rental ->
             val inclusion =
                 rentals.included.find { inclusion ->
