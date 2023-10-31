@@ -10,16 +10,18 @@ class RentalsPagingSource(
     private val filter: String
 ) : PagingSource<Int, Rental>() {
     override fun getRefreshKey(state: PagingState<Int, Rental>): Int? {
-        return state.anchorPosition?.let { position ->
-            val page = state.closestPageToPosition(position)
-            page
-                ?.prevKey?.minus(1) ?: page?.nextKey?.plus(1)
-        }
+        return 0
+//        return state.anchorPosition?.let { position ->
+//            val page = state.closestPageToPosition(position)
+//            page
+//                ?.prevKey?.minus(state.config.pageSize) ?: page?.nextKey?.plus(state.config.pageSize)
+//        }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Rental> {
         val limit = if (params.loadSize == 0) null else params.loadSize
-        val offset = (params.key ?: 0) val rentals = outdoorsyApi.fetchRentals(filter, limit, offset)
+        val offset = (params.key ?: 0)
+        val rentals = outdoorsyApi.fetchRentals(filter, limit, offset)
         rentals.data.forEach { rental ->
             val inclusion =
                 rentals.included.find { inclusion ->

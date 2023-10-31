@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +66,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.outdoorsy.interview.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -91,24 +94,23 @@ class RentalsFragment : Fragment() {
     @Preview
     @Composable
     fun AppContent() {
-        var filter by rememberSaveable { mutableStateOf("") }
         val coroutineScope = rememberCoroutineScope()
 //        coroutineScope.launch {
-        val rentals = remember { rentalsViewModel.rentalsPager }
+//        val rentals = remember { rentalsViewModel.rentalsPager }
 //        }
-        val collectedItems = rentals.collectAsLazyPagingItems()
+        val collectedItems = rentalsViewModel.rentalsResult.collectAsLazyPagingItems()
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            var cardVisible by remember { mutableStateOf(true) }
+            // var cardVisible by remember { mutableStateOf(true) }
             Box(
                 modifier = Modifier.background(MaterialTheme.colorScheme.primary)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                TextField(value = filter,
+                TextField(value = rentalsViewModel.filter.collectAsState().value,
                     modifier = Modifier.padding(20.dp).fillMaxWidth(),
                     leadingIcon = {
                         Icon(
@@ -123,8 +125,8 @@ class RentalsFragment : Fragment() {
                         )
                     },
                     onValueChange = { newText ->
-                        filter = newText
-                        cardVisible = !cardVisible
+                        rentalsViewModel.filter.value = newText
+                        // cardVisible = !cardVisible
                     })
             }
 
@@ -146,61 +148,61 @@ class RentalsFragment : Fragment() {
                     ) { rentalIndex ->
                         val rental = collectedItems[rentalIndex]
                         rental?.id?.let {
-                            AnimatedVisibility(
-                                visible = cardVisible,
-                                enter = expandVertically(),
-                                exit = shrinkVertically()
-                            ) {
-                                Card(
-                                    modifier = Modifier
-                                        .background(MaterialTheme.colorScheme.primaryContainer)
-                                        .fillMaxWidth()
-                                        .wrapContentHeight(align = Alignment.CenterVertically)
-                                        .padding(10.dp)
-                                        .animateItemPlacement(
-                                            animationSpec = tween(
-                                                durationMillis = 2000,
-                                                delayMillis = 500
-                                            )
-                                        ),
-                                    shape = RoundedCornerShape(10.dp),
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 5.dp
-                                    )
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(10.dp).fillMaxHeight(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        AsyncImage(
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(rental.primaryImageUrl)
-                                                .crossfade(true)
-                                                .build(),
-                                            placeholder = painterResource(R.drawable.ic_launcher_background),
-                                            contentDescription = stringResource(R.string.app_name),
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier.clip(RoundedCornerShape(5.dp))
-                                                .width(80.dp).height(60.dp)
+//                            AnimatedVisibility(
+//                                visible = cardVisible,
+//                                enter = expandVertically(),
+//                                exit = shrinkVertically()
+//                            ) {
+                            Card(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(align = Alignment.CenterVertically)
+                                    .padding(10.dp)
+                                    .animateItemPlacement(
+                                        animationSpec = tween(
+                                            durationMillis = 2000,
+                                            delayMillis = 500
                                         )
-                                        rental?.attributes?.name?.let {
-                                            Text(
-                                                text = it,
-                                                modifier = Modifier.padding(20.dp),
-                                                color = MaterialTheme.colorScheme.primary,
-                                                fontWeight = FontWeight.Bold,
-                                                style = TextStyle(
-                                                    fontSize = 16.sp,
-                                                    shadow = Shadow(
-                                                        color = MaterialTheme.colorScheme.secondary,
-                                                        offset = Offset(1f, 2f),
-                                                        blurRadius = 1f
-                                                    )
-//
+                                    ),
+                                shape = RoundedCornerShape(10.dp),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 5.dp
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(10.dp).fillMaxHeight(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(rental.primaryImageUrl)
+                                            .crossfade(true)
+                                            .build(),
+                                        placeholder = painterResource(R.drawable.ic_launcher_background),
+                                        contentDescription = stringResource(R.string.app_name),
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.clip(RoundedCornerShape(5.dp))
+                                            .width(80.dp).height(60.dp)
+                                    )
+                                    rental?.attributes?.name?.let {
+                                        Text(
+                                            text = it,
+                                            modifier = Modifier.padding(20.dp),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold,
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                shadow = Shadow(
+                                                    color = MaterialTheme.colorScheme.secondary,
+                                                    offset = Offset(1f, 2f),
+                                                    blurRadius = 1f
                                                 )
+//
                                             )
-                                        }
+                                        )
                                     }
+//                                    }
                                 }
                             }
                         }
