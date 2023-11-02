@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -100,7 +101,8 @@ class RentalsFragment : Fragment() {
 //        }
         val collectedItems = rentalsViewModel.rentalsResult.collectAsLazyPagingItems()
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -131,16 +133,27 @@ class RentalsFragment : Fragment() {
             }
 
             if (collectedItems.loadState.refresh is LoadState.Loading) {
-                Box(
-                    Modifier.fillMaxHeight().weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
+                LoadingState {
                     CircularProgressIndicator()
+                }
+            } else if (collectedItems.loadState.refresh is LoadState.Error
+            ) {
+                LoadingState {
+                    Text(
+                        text = "Unable to connect"
+                    )
+                    Button(onClick = {
+                        coroutineScope.launch {
+                            collectedItems.refresh()
+                        }
+                    }) {
+                        Text(text = "Retry")
+                    }
                 }
             } else {
                 LazyColumn(
                     Modifier.fillMaxHeight().weight(1f),
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Top
                 ) {
                     items(
                         count = collectedItems.itemCount,
@@ -210,6 +223,20 @@ class RentalsFragment : Fragment() {
                 }
             }
 
+        }
+    }
+
+    @Composable
+    fun LoadingState(
+        modifier: Modifier = Modifier,
+        content: @Composable () -> Unit
+    ) {
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            content()
         }
     }
 }

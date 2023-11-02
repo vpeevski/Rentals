@@ -21,19 +21,24 @@ class RentalsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Rental> {
         val limit = if (params.loadSize == 0) null else params.loadSize
         val offset = (params.key ?: 0)
-        val rentals = outdoorsyApi.fetchRentals(filter, limit, offset)
-        rentals.data.forEach { rental ->
-            val inclusion =
-                rentals.included.find { inclusion ->
-                    inclusion.id == rental.relationships?.primaryImage?.data?.id &&
-                            inclusion.type == "images"
-                }
-            rental.primaryImageUrl = inclusion?.attributes?.url
+        try {
+            val rentals = outdoorsyApi.fetchRentals(filter, limit, offset)
+            rentals.data.forEach { rental ->
+                val inclusion =
+                    rentals.included.find { inclusion ->
+                        inclusion.id == rental.relationships?.primaryImage?.data?.id &&
+                                inclusion.type == "images"
+                    }
+                rental.primaryImageUrl = inclusion?.attributes?.url
+            }
+            return LoadResult.Page(
+                data = rentals.data,
+                prevKey = if (offset == 0) null else offset - limit!!,
+                nextKey = if (rentals.data.isEmpty()) null else offset + limit!!
+            );
+        } catch (e: Exception) {
+            return LoadResult.Error(e)
         }
-        return LoadResult.Page(
-            data = rentals.data,
-            prevKey = if (offset == 0) null else offset - limit!!,
-            nextKey = if (rentals.data.isEmpty()) null else offset + limit!!
-        );
+
     }
 }

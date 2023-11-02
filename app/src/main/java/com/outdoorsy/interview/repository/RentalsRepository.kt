@@ -15,7 +15,7 @@ class RentalsRepository @Inject constructor(
     private val outdoorsyApi: OutdoorsyApi
 ) {
     fun fetchRentals(filter: String): Flow<PagingData<Rental>> = Pager(
-        config = PagingConfig(pageSize = 20, initialLoadSize = 20, enablePlaceholders = false),
+        config = PagingConfig(pageSize = 6, initialLoadSize = 6, enablePlaceholders = false),
         pagingSourceFactory = { RentalsPagingSource(outdoorsyApi, filter) }
     ).flow
 
