@@ -132,26 +132,25 @@ class RentalsFragment : Fragment() {
                     })
             }
 
-            if (collectedItems.loadState.refresh is LoadState.Loading) {
-                LoadingState {
+            when (collectedItems.loadState.refresh) {
+                is LoadState.Loading -> LoadingState {
                     CircularProgressIndicator()
                 }
-            } else if (collectedItems.loadState.refresh is LoadState.Error
-            ) {
-                LoadingState {
-                    Text(
-                        text = "Unable to connect"
-                    )
-                    Button(onClick = {
-                        coroutineScope.launch {
-                            collectedItems.refresh()
+                is LoadState.Error -> {
+                    LoadingState {
+                        Text(
+                            text = "Unable to connect"
+                        )
+                        Button(onClick = {
+                            coroutineScope.launch {
+                                collectedItems.refresh()
+                            }
+                        }) {
+                            Text(text = "Retry")
                         }
-                    }) {
-                        Text(text = "Retry")
                     }
                 }
-            } else {
-                LazyColumn(
+                else -> LazyColumn(
                     Modifier.fillMaxHeight().weight(1f),
                     verticalArrangement = Arrangement.Top
                 ) {
@@ -222,7 +221,6 @@ class RentalsFragment : Fragment() {
                     }
                 }
             }
-
         }
     }
 

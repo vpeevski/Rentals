@@ -11,11 +11,11 @@ class RentalsPagingSource(
 ) : PagingSource<Int, Rental>() {
     override fun getRefreshKey(state: PagingState<Int, Rental>): Int? {
         return 0
-//        return state.anchorPosition?.let { position ->
-//            val page = state.closestPageToPosition(position)
-//            page
-//                ?.prevKey?.minus(state.config.pageSize) ?: page?.nextKey?.plus(state.config.pageSize)
-//        }
+        return state.anchorPosition?.let { position ->
+            val page = state.closestPageToPosition(position)
+            page
+                ?.prevKey?.minus(state.config.pageSize) ?: page?.nextKey?.plus(state.config.pageSize)
+        }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Rental> {
