@@ -56,20 +56,21 @@ android {
 
 dependencies {
     implementation(libs.coreKtx)
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation(libs.appcompat)
+    implementation(libs.material)
     implementation(libs.bundles.hilt)
     kapt(libs.hiltCompiler)
+
     implementation(libs.bundles.retrofit)
     implementation(libs.kotlinxSerialization)
 
     //okhttp3
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     // Coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
 
     // Paging, Jetpack Compose integration
     implementation(libs.bundles.paging)
@@ -84,19 +85,18 @@ dependencies {
     implementation(libs.uiToolingPreview)
 
     // Optional - Integration with activities
-    implementation("androidx.activity:activity-compose:1.8.0")
-    implementation("androidx.activity:activity-ktx:1.8.0")
-
-    // Optional - Integration with ViewModels
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.activity.compose)
+    implementation(libs.activity.ktx)
+    // Integration with ViewModels
+    implementation(libs.lifecycle.viewmodel.compose)
+    // Image processing
+    implementation(libs.coilCompose)
 
 //    testImplementation("junit:junit:4.13.2")
 //    androidTestImplementation("androidx.test.ext:junit:1.1.5")
 //    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform(libs.composeBom))
-    //debugImplementation(libs.uiTooling)
+//    androidTestImplementation(platform(libs.composeBom))
+    debugImplementation(libs.uiTooling)
 
 
 }
