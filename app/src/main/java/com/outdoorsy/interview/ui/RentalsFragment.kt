@@ -66,6 +66,7 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.outdoorsy.interview.R
+import com.outdoorsy.interview.api.ErrorCode
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.last
@@ -136,87 +137,99 @@ class RentalsFragment : Fragment() {
                 is LoadState.Loading -> LoadingState {
                     CircularProgressIndicator()
                 }
+
                 is LoadState.Error -> {
                     LoadingState {
-                        Text(
-                            text = "Unable to connect"
-                        )
-                        Button(onClick = {
-                            coroutineScope.launch {
-                                collectedItems.refresh()
+                        (collectedItems.loadState.refresh as LoadState.Error).error.message?.let {
+                            Text(
+                                text = it
+                            )
+                            Button(onClick = {
+                                coroutineScope.launch {
+                                    collectedItems.refresh()
+                                }
+                            }) {
+                                Text(text = "Retry")
                             }
-                        }) {
-                            Text(text = "Retry")
                         }
                     }
                 }
+
                 else -> LazyColumn(
                     Modifier.fillMaxHeight().weight(1f),
                     verticalArrangement = Arrangement.Top
                 ) {
-                    items(
-                        count = collectedItems.itemCount,
-                        key = collectedItems.itemKey { it }
-                    ) { rentalIndex ->
-                        val rental = collectedItems[rentalIndex]
-                        rental?.id?.let {
+                    if (collectedItems.itemCount > 0) {
+                        items(
+                            count = collectedItems.itemCount,
+                            key = collectedItems.itemKey { it }
+                        ) { rentalIndex ->
+                            val rental = collectedItems[rentalIndex]
+                            rental?.id?.let {
 //                            AnimatedVisibility(
 //                                visible = cardVisible,
 //                                enter = expandVertically(),
 //                                exit = shrinkVertically()
 //                            ) {
-                            Card(
-                                modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.primaryContainer)
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(align = Alignment.CenterVertically)
-                                    .padding(10.dp)
-                                    .animateItemPlacement(
-                                        animationSpec = tween(
-                                            durationMillis = 2000,
-                                            delayMillis = 500
-                                        )
-                                    ),
-                                shape = RoundedCornerShape(10.dp),
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 5.dp
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(10.dp).fillMaxHeight(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(rental.primaryImageUrl)
-                                            .crossfade(true)
-                                            .build(),
-                                        placeholder = painterResource(R.drawable.ic_launcher_background),
-                                        contentDescription = stringResource(R.string.app_name),
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.clip(RoundedCornerShape(5.dp))
-                                            .width(80.dp).height(60.dp)
-                                    )
-                                    rental?.attributes?.name?.let {
-                                        Text(
-                                            text = it,
-                                            modifier = Modifier.padding(20.dp),
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontWeight = FontWeight.Bold,
-                                            style = TextStyle(
-                                                fontSize = 16.sp,
-                                                shadow = Shadow(
-                                                    color = MaterialTheme.colorScheme.secondary,
-                                                    offset = Offset(1f, 2f),
-                                                    blurRadius = 1f
-                                                )
-//
+                                Card(
+                                    modifier = Modifier
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(align = Alignment.CenterVertically)
+                                        .padding(10.dp)
+                                        .animateItemPlacement(
+                                            animationSpec = tween(
+                                                durationMillis = 2000,
+                                                delayMillis = 500
                                             )
+                                        ),
+                                    shape = RoundedCornerShape(10.dp),
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 5.dp
+                                    )
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(10.dp).fillMaxHeight(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(rental.primaryImageUrl)
+                                                .crossfade(true)
+                                                .build(),
+                                            placeholder = painterResource(R.drawable.ic_launcher_background),
+                                            contentDescription = stringResource(R.string.app_name),
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.clip(RoundedCornerShape(5.dp))
+                                                .width(80.dp).height(60.dp)
                                         )
-                                    }
+                                        rental?.attributes?.name?.let {
+                                            Text(
+                                                text = it,
+                                                modifier = Modifier.padding(20.dp),
+                                                color = MaterialTheme.colorScheme.primary,
+                                                fontWeight = FontWeight.Bold,
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    shadow = Shadow(
+                                                        color = MaterialTheme.colorScheme.secondary,
+                                                        offset = Offset(1f, 2f),
+                                                        blurRadius = 1f
+                                                    )
+//
+                                                )
+                                            )
+                                        }
 //                                    }
+                                    }
                                 }
                             }
+                        }
+                    } else {
+                        item {
+                            Text(
+                                text = ErrorCode.NotFount.message
+                            )
                         }
                     }
                 }

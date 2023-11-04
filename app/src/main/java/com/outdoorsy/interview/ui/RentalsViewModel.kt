@@ -20,8 +20,5 @@ class RentalsViewModel @Inject constructor(
         filter.flatMapLatest { searchText ->
             rentalsRepository
                 .fetchRentals(searchText)
-                .catch { error ->
-                    println("Error: $error")
-                }
         }.cachedIn(viewModelScope)
 }
