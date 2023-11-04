@@ -1,10 +1,11 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("kapt")
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
-//    kotlin("plugin.serialization")
-    id("org.jetbrains.kotlin.plugin.parcelize")
+    alias(libs.plugins.com.android.application)
+    alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.kotlinParcelize)
 }
 
 android {
@@ -13,6 +14,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
@@ -44,27 +46,23 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    packaging {
+        resources {
+            excludes += "META-INF/gradle/incremental.annotation.processors"
+        }
+    }
 }
 
 dependencies {
-    val retrofitVersion: String by rootProject.extra
-    val pagingVersion: String by rootProject.extra
-    val lifecycleVersion: String by rootProject.extra
-    val composeVersion: String by rootProject.extra
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation(libs.coreKtx)
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
+    implementation(libs.bundles.hilt)
+    kapt(libs.hiltCompiler)
+    implementation(libs.bundles.retrofit)
+    implementation(libs.kotlinxSerialization)
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-
-    //retrofit2,gson,okhttp3
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
     //okhttp3
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
@@ -73,38 +71,33 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
-    // Paging
-    implementation("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    // optional - Jetpack Compose integration
-    implementation("androidx.paging:paging-compose:3.3.0-alpha02")
-
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}")
+    // Paging, Jetpack Compose integration
+    implementation(libs.bundles.paging)
+    implementation(libs.lifecycle)
     implementation("androidx.fragment:fragment-ktx:1.6.1")
 
-    val composeBom = platform("androidx.compose:compose-bom:2023.10.00")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
+    implementation(platform(libs.composeBom))
+    implementation(libs.composeUI)
+    implementation(libs.material3)
+    implementation(libs.materialIconsExtended)
+    implementation(libs.uiTooling)
+    implementation(libs.uiToolingPreview)
 
-    // Choose one of the following:
-    // Material Design 3
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-extended")
-
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-
-//    // or skip Material Design and build directly on top of foundational components
-    implementation("androidx.compose.foundation:foundation")
-    // or only import the main APIs for the underlying toolkit systems,
-    // such as input and measurement/layout
-    implementation("androidx.compose.ui:ui")
     // Optional - Integration with activities
     implementation("androidx.activity:activity-compose:1.8.0")
     implementation("androidx.activity:activity-ktx:1.8.0")
+
     // Optional - Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+//    testImplementation("junit:junit:4.13.2")
+//    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation(platform(libs.composeBom))
+    //debugImplementation(libs.uiTooling)
+
 
 }
 
