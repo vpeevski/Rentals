@@ -4,10 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.animation.AnimatedVisibility
+import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,16 +29,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -47,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -68,8 +71,6 @@ import coil.request.ImageRequest
 import com.outdoorsy.interview.R
 import com.outdoorsy.interview.api.ErrorCode
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -171,64 +172,97 @@ class RentalsFragment : Fragment() {
 //                                enter = expandVertically(),
 //                                exit = shrinkVertically()
 //                            ) {
-                                Card(
-                                    onClick = {
-                                        rentalsViewModel.onApplyUserAction(
-                                            Action.Remove(
-                                                rental
-                                            )
-                                        )
-                                    },
-                                    modifier = Modifier
-                                        .background(MaterialTheme.colorScheme.primaryContainer)
-                                        .fillMaxWidth()
-                                        .wrapContentHeight(align = Alignment.CenterVertically)
-                                        .padding(10.dp)
-                                        .animateItemPlacement(
-                                            animationSpec = tween(
-                                                durationMillis = 2000,
-                                                delayMillis = 500
-                                            )
-                                        ),
-                                    shape = RoundedCornerShape(10.dp),
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 5.dp
-                                    )
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(10.dp).fillMaxHeight(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        AsyncImage(
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(rental.primaryImageUrl)
-                                                .crossfade(true)
-                                                .build(),
-                                            placeholder = painterResource(R.drawable.ic_launcher_background),
-                                            contentDescription = stringResource(R.string.app_name),
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier.clip(RoundedCornerShape(5.dp))
-                                                .width(80.dp).height(60.dp)
-                                        )
-                                        rental?.attributes?.name?.let {
-                                            Text(
-                                                text = it,
-                                                modifier = Modifier.padding(20.dp),
-                                                color = MaterialTheme.colorScheme.primary,
-                                                fontWeight = FontWeight.Bold,
-                                                style = TextStyle(
-                                                    fontSize = 16.sp,
-                                                    shadow = Shadow(
-                                                        color = MaterialTheme.colorScheme.secondary,
-                                                        offset = Offset(1f, 2f),
-                                                        blurRadius = 1f
-                                                    )
-//
-                                                )
-                                            )
-                                        }
-//                                    }
+                                var showing by rememberSaveable { mutableStateOf(true) }
+                                val dismissState = rememberDismissState(
+                                    confirmValueChange = {
+                                        if (it == DismissValue.DismissedToEnd) {
+                                            showing = false
+                                            true
+                                        } else false
                                     }
+                                )
+                                dismissState
+                                SwipeToDismiss(
+                                    state = dismissState,
+                                    background = {
+                                        val color by animateColorAsState(
+                                            when (dismissState.targetValue) {
+                                                DismissValue.Default -> Color.LightGray
+                                                DismissValue.DismissedToEnd -> Color.Green
+                                                DismissValue.DismissedToStart -> Color.Red
+                                            }
+                                        )
+                                        Box(Modifier.fillMaxSize().background(color))
+                                    },
+                                    dismissContent = {
+                                        Card(
+                                            onClick = {
+                                            },
+                                            modifier = Modifier
+                                                .background(MaterialTheme.colorScheme.primaryContainer)
+                                                .fillMaxWidth()
+                                                .wrapContentHeight(align = Alignment.CenterVertically)
+                                                .padding(10.dp)
+                                                .animateItemPlacement(
+                                                    animationSpec = tween(
+                                                        durationMillis = 2000,
+                                                        delayMillis = 500
+                                                    )
+                                                ),
+                                            shape = RoundedCornerShape(10.dp),
+                                            elevation = CardDefaults.cardElevation(
+                                                defaultElevation = 5.dp
+                                            )
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(10.dp).fillMaxHeight(),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                AsyncImage(
+                                                    model = ImageRequest.Builder(LocalContext.current)
+                                                        .data(rental.primaryImageUrl)
+                                                        .crossfade(true)
+                                                        .build(),
+                                                    placeholder = painterResource(R.drawable.ic_launcher_background),
+                                                    contentDescription = stringResource(R.string.app_name),
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier.clip(RoundedCornerShape(5.dp))
+                                                        .width(80.dp).height(60.dp)
+                                                )
+                                                rental?.attributes?.name?.let {
+                                                    Text(
+                                                        text = it,
+                                                        modifier = Modifier.padding(20.dp),
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        fontWeight = FontWeight.Bold,
+                                                        style = TextStyle(
+                                                            fontSize = 16.sp,
+                                                            shadow = Shadow(
+                                                                color = MaterialTheme.colorScheme.secondary,
+                                                                offset = Offset(1f, 2f),
+                                                                blurRadius = 1f
+                                                            )
+//
+                                                        )
+                                                    )
+                                                }
+//                                    }
+                                            }
+                                        }
+                                    }
+                                )
+
+                                LaunchedEffect(showing) {
+                                    if (!showing) {
+                                        rentalsViewModel.onApplyUserAction(Action.Remove(rental))
+                                    }
+                                }
+                                if (!showing) {
+                                    Toast.makeText(
+                                        LocalContext.current,
+                                        "Rental removed",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
