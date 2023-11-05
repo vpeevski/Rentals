@@ -39,6 +39,7 @@ class AppModule {
     fun provideRetrofit(httpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
             .baseUrl("https://search.outdoorsy.com/")
+//            .baseUrl("https://104.18.15.27/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(httpClient)
             .build()

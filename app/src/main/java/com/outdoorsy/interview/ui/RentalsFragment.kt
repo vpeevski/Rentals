@@ -92,7 +92,7 @@ class RentalsFragment : Fragment() {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
     @Preview
     @Composable
     fun AppContent() {
@@ -172,6 +172,13 @@ class RentalsFragment : Fragment() {
 //                                exit = shrinkVertically()
 //                            ) {
                                 Card(
+                                    onClick = {
+                                        rentalsViewModel.onApplyUserAction(
+                                            Action.Remove(
+                                                rental
+                                            )
+                                        )
+                                    },
                                     modifier = Modifier
                                         .background(MaterialTheme.colorScheme.primaryContainer)
                                         .fillMaxWidth()
