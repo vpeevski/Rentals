@@ -39,6 +39,20 @@ android {
             )
         }
     }
+
+    flavorDimensions("mode")
+    productFlavors {
+        create("outdoorsy") {
+            dimension = "mode"
+            // Define specific properties for flavor1
+        }
+        create("dev") {
+            dimension = "mode"
+            // Define specific properties for flavor2
+        }
+    }
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -64,15 +78,15 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.kotlinxSerialization)
 
-    //okhttp3
+//okhttp3
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
-    // Coroutine
+// Coroutine
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
-    // Paging, Jetpack Compose integration
+// Paging, Jetpack Compose integration
     implementation(libs.bundles.paging)
     implementation(libs.lifecycle)
     implementation("androidx.fragment:fragment-ktx:1.6.1")
@@ -84,12 +98,12 @@ dependencies {
     implementation(libs.uiTooling)
     implementation(libs.uiToolingPreview)
 
-    // Optional - Integration with activities
+// Optional - Integration with activities
     implementation(libs.activity.compose)
     implementation(libs.activity.ktx)
-    // Integration with ViewModels
+// Integration with ViewModels
     implementation(libs.lifecycle.viewmodel.compose)
-    // Image processing
+// Image processing
     implementation(libs.coilCompose)
 
 //    testImplementation("junit:junit:4.13.2")
@@ -97,8 +111,10 @@ dependencies {
 //    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 //    androidTestImplementation(platform(libs.composeBom))
     debugImplementation(libs.uiTooling)
+}
 
-
+kotlin {
+    jvmToolchain(17)
 }
 
 // Allow references to generated code
