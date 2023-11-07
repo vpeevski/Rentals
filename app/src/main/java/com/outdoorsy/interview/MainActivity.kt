@@ -1,7 +1,6 @@
 package com.outdoorsy.interview
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import com.outdoorsy.interview.ui.RentalsFragment
 import dagger.hilt.android.AndroidEntryPoint
