@@ -48,8 +48,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -70,6 +70,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.outdoorsy.interview.R
 import com.outdoorsy.interview.api.ErrorCode
+import com.outdoorsy.interview.ui.theme.OutdoorsyTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -88,7 +89,9 @@ class RentalsFragment : Fragment() {
 //        val rentals = emptyList<Any>()
         return ComposeView(requireContext()).apply {
             setContent {
-                AppContent()
+                OutdoorsyTheme(dynamicColor = false) {
+                    AppContent()
+                }
             }
         }
     }
@@ -100,23 +103,18 @@ class RentalsFragment : Fragment() {
         val coroutineScope = rememberCoroutineScope()
         val collectedItems = rentalsViewModel.rentalsResult.collectAsLazyPagingItems()
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primaryContainer),
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // var cardVisible by remember { mutableStateOf(true) }
             Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primary)
+                modifier = Modifier.shadow(2.dp).background(MaterialTheme.colorScheme.primary)
                     .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 TextField(value = rentalsViewModel.filter.collectAsState().value,
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(20.dp).fillMaxWidth(),
                     leadingIcon = {
                         Icon(
                             Icons.Outlined.Search,
@@ -131,7 +129,6 @@ class RentalsFragment : Fragment() {
                     },
                     onValueChange = { newText ->
                         rentalsViewModel.filter.value = newText
-                        // cardVisible = !cardVisible
                     })
             }
 
@@ -158,9 +155,7 @@ class RentalsFragment : Fragment() {
                 }
 
                 else -> LazyColumn(
-                    Modifier
-                        .fillMaxHeight()
-                        .weight(1f),
+                    Modifier.fillMaxHeight().weight(1f),
                     verticalArrangement = Arrangement.Top
                 ) {
                     if (collectedItems.itemCount > 0) {
@@ -170,11 +165,6 @@ class RentalsFragment : Fragment() {
                         ) { rentalIndex ->
                             val rental = collectedItems[rentalIndex]
                             rental?.id?.let {
-//                            AnimatedVisibility(
-//                                visible = cardVisible,
-//                                enter = expandVertically(),
-//                                exit = shrinkVertically()
-//                            ) {
                                 var showing by rememberSaveable { mutableStateOf(true) }
                                 val dismissState = rememberDismissState(
                                     confirmValueChange = {
@@ -188,16 +178,10 @@ class RentalsFragment : Fragment() {
                                     onClick = {
                                     },
                                     modifier = Modifier
-                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .background(MaterialTheme.colorScheme.surface)
                                         .fillMaxWidth()
                                         .wrapContentHeight(align = Alignment.CenterVertically)
-                                        .padding(10.dp)
-                                        .animateItemPlacement(
-                                            animationSpec = tween(
-                                                durationMillis = 2000,
-                                                delayMillis = 500
-                                            )
-                                        ),
+                                        .padding(10.dp),
                                     shape = RoundedCornerShape(10.dp),
                                     elevation = CardDefaults.cardElevation(
                                         defaultElevation = 5.dp
