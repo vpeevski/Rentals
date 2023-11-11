@@ -5,7 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.outdoorsy.interview.api.OutdoorsyApi
 import com.outdoorsy.interview.rentals.Rental
-import com.outdoorsy.interview.ui.RentalsPagingSource
+import com.outdoorsy.interview.ui.rentals.RentalsPagingSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -1,12 +1,12 @@
-package com.outdoorsy.interview.ui
+package com.outdoorsy.interview.ui.rentals
 
-import android.app.appsearch.SearchResult
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.outdoorsy.interview.api.ErrorCode
 import com.outdoorsy.interview.api.OutdoorsyApi
 import com.outdoorsy.interview.rentals.Rental
 import com.outdoorsy.interview.rentals.RentalsResponse
+import com.outdoorsy.interview.ui.ApiResult
 import retrofit2.HttpException
 
 class RentalsPagingSource(
