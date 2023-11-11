@@ -92,11 +92,8 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.1")
 
     implementation(platform(libs.composeBom))
-    implementation(libs.composeUI)
-    implementation(libs.material3)
-    implementation(libs.materialIconsExtended)
-    implementation(libs.uiTooling)
-    implementation(libs.uiToolingPreview)
+    implementation(libs.bundles.compose)
+    implementation(libs.bundles.material)
 
 // Optional - Integration with activities
     implementation(libs.activity.compose)

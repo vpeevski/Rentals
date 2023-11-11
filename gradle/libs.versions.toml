@@ -15,6 +15,7 @@ pagingCompose = "3.3.0-alpha02"
 lifecycle = "2.6.2"
 compose-bom = "2023.10.01"
 activity-compose = "1.8.0"
+navigation-compose = "2.7.5"
 activityKtx = "1.8.0"
 coil = "2.4.0"
 
@@ -38,7 +39,7 @@ lifecycle = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", ve
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 composeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 composeUI = { group = "androidx.compose.ui", name = "ui" }
-#composeNavigation = { group = "androidx.navigation", name = "navigation-compose" }
+composeNavigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 materialIconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
@@ -70,6 +71,18 @@ retrofit = [
 paging = [
     "pagingRuntime",
     "pagingCompose"
+]
+
+compose = [
+    "composeUI",
+    "composeNavigation",
+    "uiTooling",
+    "uiToolingPreview"
+]
+
+material = [
+    "material3",
+    "materialIconsExtended"
 ]
 
 
