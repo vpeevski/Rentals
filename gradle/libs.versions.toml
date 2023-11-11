@@ -38,6 +38,7 @@ lifecycle = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", ve
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 composeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 composeUI = { group = "androidx.compose.ui", name = "ui" }
+#composeNavigation = { group = "androidx.navigation", name = "navigation-compose" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 materialIconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
