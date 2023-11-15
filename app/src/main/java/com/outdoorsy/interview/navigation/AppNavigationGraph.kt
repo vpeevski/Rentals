@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.outdoorsy.interview.ui.ShowFullSizeCentered
+import com.outdoorsy.interview.ui.rental.details.RentalDetails
 import com.outdoorsy.interview.ui.rentals.SearchRentals
 
 @Composable
@@ -40,8 +41,8 @@ fun OutdoorsyNavHost(
             route = SingleRentalDetails.routeWithArguments,
 //            arguments = SingleRentalDetails.routeArguments
         ) { navBackStackEntry ->
-            val rentalId = navBackStackEntry.arguments?.getString(SingleRentalDetails.rentalId)
-            Text(text = "Single rental details, id: $rentalId")
+            val rentalId = navBackStackEntry.arguments?.getString(SingleRentalDetails.rentalIdParam)
+            RentalDetails(hiltViewModel())
         }
     }
 }
