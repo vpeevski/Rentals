@@ -3,6 +3,7 @@ package com.outdoorsy.interview.ui.rentals
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -52,8 +53,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -68,7 +67,10 @@ import com.outdoorsy.interview.ui.ShowFullSizeCentered
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchRentals(rentalsViewModel: RentalsViewModel) {
+fun SearchRentals(
+    rentalsViewModel: RentalsViewModel,
+    onRentalClick: (String) -> Unit = {}
+) {
     val collectedItems = rentalsViewModel.rentalsResult.collectAsLazyPagingItems()
     Scaffold(
         topBar = {
@@ -84,7 +86,7 @@ fun SearchRentals(rentalsViewModel: RentalsViewModel) {
                 RetryMessage(collectedItems)
             }
 
-            else -> SearchRentalsResult(rentalsViewModel, collectedItems)
+            else -> SearchRentalsResult(rentalsViewModel, collectedItems, onRentalClick)
         }
     }
 }
@@ -137,7 +139,8 @@ private fun RetryMessage(collectedItems: LazyPagingItems<Rental>) {
 @Composable
 private fun SearchRentalsResult(
     rentalsViewModel: RentalsViewModel,
-    collectedItems: LazyPagingItems<Rental>
+    collectedItems: LazyPagingItems<Rental>,
+    onRentalClick: (String) -> Unit = {}
 ) {
     LazyColumn(
         Modifier.fillMaxHeight(),
@@ -174,13 +177,12 @@ private fun SearchRentalsResult(
                         },
                         dismissContent = {
                             Card(
-                                onClick = {
-                                },
                                 modifier = Modifier
                                     .background(MaterialTheme.colorScheme.surface)
                                     .fillMaxWidth()
                                     .wrapContentHeight(align = Alignment.CenterVertically)
-                                    .padding(10.dp),
+                                    .padding(10.dp)
+                                    .clickable { onRentalClick(rental.id) },
                                 shape = RoundedCornerShape(10.dp),
                                 elevation = CardDefaults.cardElevation(
                                     defaultElevation = 5.dp

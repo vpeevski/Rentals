@@ -1,6 +1,7 @@
 package com.outdoorsy.interview.navigation
 
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +29,19 @@ fun OutdoorsyNavHost(
         }
 
         composable(route = AllRentals.route) {
-            SearchRentals(hiltViewModel())
+            SearchRentals(
+                hiltViewModel(),
+                onRentalClick = { rentalId ->
+                    navController.navigate("${SingleRentalDetails.route}/$rentalId")
+                })
+        }
+
+        composable(
+            route = SingleRentalDetails.routeWithArguments,
+//            arguments = SingleRentalDetails.routeArguments
+        ) { navBackStackEntry ->
+            val rentalId = navBackStackEntry.arguments?.getString(SingleRentalDetails.rentalId)
+            Text(text = "Single rental details, id: $rentalId")
         }
     }
 }
