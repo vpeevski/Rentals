@@ -4,6 +4,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun RentalDetails(rentalDetailsViewModel: RentalDetailsViewModel) {
-    Text(text = "Single rental details, id: ${rentalDetailsViewModel.rentalId}")
+fun RentalDetails(rentalId: String?) {
+    rentalId?.let {
+        Text(text = "Single rental details, id: $rentalId")
+    }
 }

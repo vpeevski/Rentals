@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Rental private constructor (
+data class Rental constructor (
     val id: String,
     val attributes: RentAttributes,
     var primaryImageUrl: String?

@@ -34,7 +34,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +46,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
@@ -62,86 +63,105 @@ import coil.request.ImageRequest
 import com.outdoorsy.interview.R
 import com.outdoorsy.interview.api.ErrorCode
 import com.outdoorsy.interview.rentals.Rental
-import com.outdoorsy.interview.ui.Action
 import com.outdoorsy.interview.ui.ShowFullSizeCentered
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
 fun SearchRentals(
-    rentalsViewModel: RentalsViewModel,
-    onRentalClick: (String) -> Unit = {}
+    filter: String = "",
+    onFilterChanged: (String) -> Unit = {},
+    onRentalClick: (String) -> Unit = {},
+    pagingRentals: Flow<PagingData<Rental>> = MutableStateFlow(PagingData.from(emptyList())),
+    onRemoveRental: (Rental) -> Unit = {}
 ) {
-    val collectedItems = rentalsViewModel.rentalsResult.collectAsLazyPagingItems()
     Scaffold(
         topBar = {
-            SearchRow(rentalsViewModel)
+            SearchRow(filter, onFilterChanged = onFilterChanged)
         }
     ) { padding ->
+        val collectedItems = pagingRentals.collectAsLazyPagingItems()
         when (collectedItems.loadState.refresh) {
             is LoadState.Loading -> ShowFullSizeCentered {
                 CircularProgressIndicator()
             }
 
             is LoadState.Error -> ShowFullSizeCentered {
-                RetryMessage(collectedItems)
+                RetryMessage(
+                    (collectedItems.loadState.refresh as LoadState.Error).error.message
+                ) { collectedItems.refresh() }
             }
 
-            else -> SearchRentalsResult(rentalsViewModel, collectedItems, onRentalClick)
+            else -> SearchRentalsResult(
+                pagingRentals,
+                onRentalClick,
+                onRemoveRental
+            )
         }
     }
 }
 
 @Composable
-private fun SearchRow(rentalsViewModel: RentalsViewModel) {
+fun SearchRow(filter: String = "", onFilterChanged: (String) -> Unit = {}) {
     Box(
         modifier = Modifier.background(MaterialTheme.colorScheme.primary)
             .fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
-        TextField(value = rentalsViewModel.filter.collectAsState().value,
-            modifier = Modifier.padding(20.dp).fillMaxWidth(),
+        TextField(value = filter,
+            modifier = Modifier.padding(20.dp).fillMaxWidth().testTag("SearchTextField"),
             leadingIcon = {
                 Icon(
                     Icons.Outlined.Search,
-                    contentDescription = "Search for rentals"
+                    contentDescription = "Search for rentals",
+                    modifier = Modifier.testTag("SearchIcon")
                 )
             },
             trailingIcon = {
                 Icon(
                     Icons.Filled.Mic,
-                    contentDescription = "Search for rentals"
+                    contentDescription = "Search for rentals",
+                    modifier = Modifier.testTag("MicIcon")
                 )
             },
-            onValueChange = { newText ->
-                rentalsViewModel.filter.value = newText
+            onValueChange = { newText: String ->
+                onFilterChanged(newText)
+                //  rentalsViewModel.filter.value = newText
             })
     }
 }
 
 @Composable
-private fun RetryMessage(collectedItems: LazyPagingItems<Rental>) {
+fun RetryMessage(
+    errorMessage: String? = "",
+    doRefresh: () -> Unit = {}
+) {
     val coroutineScope = rememberCoroutineScope()
-    (collectedItems.loadState.refresh as LoadState.Error).error.message?.let {
-        Text(
-            text = it
-        )
-        Button(onClick = {
-            coroutineScope.launch {
-                collectedItems.refresh()
-            }
-        }) {
-            Text(text = "Retry")
+//    (collectedItems.loadState.refresh as LoadState.Error).error.message?.let {
+    Text(
+        text = errorMessage ?: ""
+    )
+    Button(onClick = {
+        coroutineScope.launch {
+            doRefresh()
         }
+    }) {
+        Text(text = "Retry")
+//        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+@VisibleForTesting
 @Composable
-private fun SearchRentalsResult(
-    rentalsViewModel: RentalsViewModel,
-    collectedItems: LazyPagingItems<Rental>,
-    onRentalClick: (String) -> Unit = {}
+fun SearchRentalsResult(
+    rentalsPaging: Flow<PagingData<Rental>> = MutableStateFlow(PagingData.from(emptyList())),
+    onRentalClick: (String) -> Unit = {},
+    onRemoveRental: (Rental) -> Unit = {}
 ) {
+    val collectedItems = rentalsPaging.collectAsLazyPagingItems()
     LazyColumn(
         Modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.Top
@@ -233,11 +253,7 @@ private fun SearchRentalsResult(
 
                     LaunchedEffect(showing) {
                         if (!showing) {
-                            rentalsViewModel.onApplyUserAction(
-                                Action.Remove(
-                                    rental
-                                )
-                            )
+                            onRemoveRental(rental)
                         }
                     }
                     if (!showing) {
@@ -251,9 +267,11 @@ private fun SearchRentalsResult(
             }
         } else {
             item {
-                Text(
-                    text = ErrorCode.NotFount.message
-                )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = ErrorCode.NotFount.message
+                    )
+                }
             }
         }
     }

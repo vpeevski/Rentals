@@ -22,12 +22,13 @@ android {
 
     defaultConfig {
         applicationId = "com.outdoorsy.interview"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner = "com.outdoorsy.interview.CustomTestRunner"
     }
 
     buildTypes {
@@ -103,11 +104,14 @@ dependencies {
 // Image processing
     implementation(libs.coilCompose)
 
-//    testImplementation("junit:junit:4.13.2")
-//    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-//    androidTestImplementation(platform(libs.composeBom))
-    debugImplementation(libs.uiTooling)
+
+    // Testing dependencies
+    androidTestImplementation ("androidx.arch.core:core-testing:2.2.0")
+
+    // Compose testing dependencies
+    androidTestImplementation(platform(libs.composeBom))
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4")
+    debugImplementation ("androidx.compose.ui:ui-test-manifest")
 }
 
 kotlin {
