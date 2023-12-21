@@ -27,8 +27,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-//        testInstrumentationRunner = "com.outdoorsy.interview.CustomTestRunner"
+//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.outdoorsy.interview.HiltAppTestRunner"
     }
 
     buildTypes {
@@ -67,6 +67,14 @@ android {
             excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
+
+    testOptions {
+        packaging {
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
+    }
 }
 
 dependencies {
@@ -74,6 +82,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.bundles.hilt)
+    implementation(libs.runner)
     kapt(libs.hiltCompiler)
 
     implementation(libs.bundles.retrofit)
@@ -90,7 +99,7 @@ dependencies {
 // Paging, Jetpack Compose integration
     implementation(libs.bundles.paging)
     implementation(libs.lifecycle)
-    implementation("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
@@ -106,12 +115,23 @@ dependencies {
 
 
     // Testing dependencies
-    androidTestImplementation ("androidx.arch.core:core-testing:2.2.0")
+    testImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+
+    androidTestImplementation(libs.arch.core.testing)
+    androidTestImplementation(libs.test.core.ktx)
+    androidTestImplementation(libs.navigation.testing)
+    androidTestImplementation(libs.hilt.testing)
+    androidTestImplementation(libs.activity.ktx)
+    androidTestImplementation("app.cash.turbine:turbine:0.12.1")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    kaptAndroidTest(libs.hilt.android.compiler)
 
     // Compose testing dependencies
     androidTestImplementation(platform(libs.composeBom))
-    androidTestImplementation ("androidx.compose.ui:ui-test-junit4")
-    debugImplementation ("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
 }
 
 kotlin {

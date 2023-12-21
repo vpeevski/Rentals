@@ -19,6 +19,9 @@ activity-compose = "1.8.0"
 navigation-compose = "2.7.5"
 activityKtx = "1.8.0"
 coil = "2.4.0"
+mockkAndroid = "1.12.5"
+arch-testing = "2.2.0"
+testCoreKtx = "1.5.0"
 
 
 [libraries]
@@ -49,6 +52,15 @@ activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activ
 uiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 uiToolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 coilCompose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+#Testing
+runner = { group = "androidx.test", name = "runner", version = "1.5.2" }
+hilt-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "arch-testing" }
+test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "testCoreKtx" }
+navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation-compose" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockkAndroid" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }

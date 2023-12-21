@@ -9,19 +9,23 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.outdoorsy.interview.ui.Action
+import com.outdoorsy.interview.ui.AppBarState
 import com.outdoorsy.interview.ui.ShowFullSizeCentered
+import com.outdoorsy.interview.ui.home.HomeScreen
 import com.outdoorsy.interview.ui.rental.details.RentalDetails
 import com.outdoorsy.interview.ui.rentals.RentalsViewModel
 import com.outdoorsy.interview.ui.rentals.SearchRentals
 
 @Composable
 fun OutdoorsyNavHost(
-    modifier: Modifier,
-    navController: NavHostController
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    startDestination: AppNavigation = Home,
+    appBarState: AppBarState
 ) {
     NavHost(
         modifier = modifier,
-        startDestination = AllRentals.route,
+        startDestination = startDestination.route,
         navController = navController
     ) {
 
@@ -35,6 +39,7 @@ fun OutdoorsyNavHost(
             val rentalsViewModel = hiltViewModel<RentalsViewModel>()
             val filter = rentalsViewModel.filter.collectAsState().value
             SearchRentals(
+                appBarState = appBarState,
                 filter = filter,
                 onFilterChanged = { newFilter ->
                     rentalsViewModel.filter.value = newFilter
@@ -49,6 +54,25 @@ fun OutdoorsyNavHost(
                             rental
                         )
                     )
+                },
+                onBackPressed = {
+                    navController.popBackStack()
+                },
+                onSettingsPressed = {
+                    println("Settings pressed...")
+                }
+            )
+        }
+
+        composable(route = Home.route) {
+            HomeScreen(
+                appBarState = appBarState,
+                onLoginClick = {
+                    println("Login clicked...")
+                },
+                onSearchRentalsClick = {
+                    println("Search Rentals clicked...")
+                    navController.navigate(AllRentals.route)
                 })
         }
 

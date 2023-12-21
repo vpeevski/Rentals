@@ -10,12 +10,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+object RemoteApiModule {
 
     @Provides
     @Singleton
@@ -31,7 +30,7 @@ class AppModule {
     }
 
     @Provides
-    @Inject
+    @Singleton
     fun provideApi(retrofit: Retrofit): OutdoorsyApi = retrofit.create(OutdoorsyApi::class.java)
 
     @Provides

@@ -2,10 +2,20 @@ package com.outdoorsy.interview.navigation
 
 interface AppNavigation {
     val route: String
+    val title: String?
+        get() = ""
+}
+
+object Home : AppNavigation {
+    override val route: String = "home"
+    override val title: String?
+        get() = "Outdoorsy home page"
 }
 
 object AllRentals : AppNavigation {
     override val route: String = "all-rentals"
+    override val title: String?
+        get() = "Search rentals"
 }
 
 object Loading : AppNavigation {

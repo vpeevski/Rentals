@@ -13,8 +13,8 @@ import javax.inject.Singleton
 @Singleton
 class RentalsRepository @Inject constructor(
     private val outdoorsyApi: OutdoorsyApi
-) {
-    fun fetchRentals(filter: String): Flow<PagingData<Rental>> = Pager(
+) : IRentalRepository<Flow<PagingData<Rental>>> {
+    override fun fetchRentals(filter: String): Flow<PagingData<Rental>> = Pager(
         config = PagingConfig(pageSize = 6, initialLoadSize = 6, enablePlaceholders = false),
         pagingSourceFactory = { RentalsPagingSource(outdoorsyApi, filter) }
     ).flow

@@ -1,5 +1,6 @@
 package com.outdoorsy.interview.ui.rentals
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.outdoorsy.interview.api.ErrorCode
@@ -69,8 +70,11 @@ class RentalsPagingSource(
             when (e) {
                 is HttpException ->
                     ApiResult.Error(ErrorCode.NetworkError);
-                else ->
+                else -> {
+                    Log.d("Api ERROR: ", e.toString())
                     ApiResult.Error(ErrorCode.NotFount)
+                }
+
             }
         }
     }

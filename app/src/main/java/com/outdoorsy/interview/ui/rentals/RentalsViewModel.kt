@@ -47,7 +47,6 @@ class RentalsViewModel @Inject constructor(
             is Action.Remove -> paging.filter {
                 action.item != it
             }
-
             is Action.Insert -> paging.insertHeaderItem(item = action.item)
             // else -> paging
         }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,7 +29,6 @@ import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -51,11 +53,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
@@ -63,29 +65,47 @@ import coil.request.ImageRequest
 import com.outdoorsy.interview.R
 import com.outdoorsy.interview.api.ErrorCode
 import com.outdoorsy.interview.rentals.Rental
+import com.outdoorsy.interview.ui.ActionMenuItemType
+import com.outdoorsy.interview.ui.AppBarState
+import com.outdoorsy.interview.ui.HomeScreenState
+import com.outdoorsy.interview.ui.RentalsScreenState
 import com.outdoorsy.interview.ui.ShowFullSizeCentered
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
 
+@OptIn(ExperimentalMaterial3Api::class)
+//@Preview
 @Composable
 fun SearchRentals(
+    appBarState: AppBarState,
     filter: String = "",
     onFilterChanged: (String) -> Unit = {},
     onRentalClick: (String) -> Unit = {},
     pagingRentals: Flow<PagingData<Rental>> = MutableStateFlow(PagingData.from(emptyList())),
-    onRemoveRental: (Rental) -> Unit = {}
+    onRemoveRental: (Rental) -> Unit = {},
+    onBackPressed: () -> Unit = {},
+    onSettingsPressed: () -> Unit = {}
 ) {
-    Scaffold(
-        topBar = {
-            SearchRow(filter, onFilterChanged = onFilterChanged)
-        }
-    ) { padding ->
+    val screen = appBarState.currentScreen
+    LaunchedEffect(key1 = screen) {
+        screen?.buttonsFlow?.onEach { button ->
+            when (button) {
+                ActionMenuItemType.Back -> onBackPressed()
+                ActionMenuItemType.Settings -> onSettingsPressed()
+                else -> {}
+            }
+        }?.launchIn(this)
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        SearchRow(filter, onFilterChanged = onFilterChanged)
         val collectedItems = pagingRentals.collectAsLazyPagingItems()
         when (collectedItems.loadState.refresh) {
             is LoadState.Loading -> ShowFullSizeCentered {
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.testTag("SearchSpinner"))
             }
 
             is LoadState.Error -> ShowFullSizeCentered {
@@ -136,7 +156,7 @@ fun SearchRow(filter: String = "", onFilterChanged: (String) -> Unit = {}) {
 @Composable
 fun RetryMessage(
     errorMessage: String? = "",
-    doRefresh: () -> Unit = {}
+    doRefresh: () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
 //    (collectedItems.loadState.refresh as LoadState.Error).error.message?.let {
@@ -163,8 +183,8 @@ fun SearchRentalsResult(
 ) {
     val collectedItems = rentalsPaging.collectAsLazyPagingItems()
     LazyColumn(
-        Modifier.fillMaxHeight(),
-        verticalArrangement = Arrangement.Top
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
     ) {
         if (collectedItems.itemCount > 0) {
             items(
@@ -213,21 +233,24 @@ fun SearchRentalsResult(
                                         .fillMaxHeight(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(
-                                            LocalContext.current
+                                    rental.primaryImageUrl?.let {
+                                        AsyncImage(
+                                            model =
+                                            ImageRequest.Builder(
+                                                LocalContext.current
+                                            )
+                                                .data(rental.primaryImageUrl)
+                                                .crossfade(true)
+                                                .build(),
+                                            placeholder = painterResource(R.drawable.ic_launcher_background),
+                                            contentDescription = stringResource(R.string.app_name),
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.clip(
+                                                RoundedCornerShape(5.dp)
+                                            )
+                                                .width(80.dp).height(60.dp)
                                         )
-                                            .data(rental.primaryImageUrl)
-                                            .crossfade(true)
-                                            .build(),
-                                        placeholder = painterResource(R.drawable.ic_launcher_background),
-                                        contentDescription = stringResource(R.string.app_name),
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.clip(
-                                            RoundedCornerShape(5.dp)
-                                        )
-                                            .width(80.dp).height(60.dp)
-                                    )
+                                    }
                                     rental?.attributes?.name?.let {
                                         Text(
                                             text = it,
@@ -267,7 +290,10 @@ fun SearchRentalsResult(
             }
         } else {
             item {
-                Box(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
+                ) {
                     Text(
                         text = ErrorCode.NotFount.message
                     )
