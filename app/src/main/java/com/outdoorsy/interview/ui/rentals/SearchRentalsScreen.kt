@@ -29,6 +29,7 @@ import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -64,7 +65,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.outdoorsy.interview.R
 import com.outdoorsy.interview.api.ErrorCode
+import com.outdoorsy.interview.navigation.BackNavigationButton
 import com.outdoorsy.interview.rentals.Rental
+import com.outdoorsy.interview.snackbar.showSnackBar
 import com.outdoorsy.interview.ui.ActionMenuItemType
 import com.outdoorsy.interview.ui.AppBarState
 import com.outdoorsy.interview.ui.HomeScreenState
@@ -82,6 +85,7 @@ import org.jetbrains.annotations.VisibleForTesting
 @Composable
 fun SearchRentals(
     appBarState: AppBarState,
+    snackbarHostState: SnackbarHostState,
     filter: String = "",
     onFilterChanged: (String) -> Unit = {},
     onRentalClick: (String) -> Unit = {},
@@ -94,12 +98,29 @@ fun SearchRentals(
     LaunchedEffect(key1 = screen) {
         screen?.buttonsFlow?.onEach { button ->
             when (button) {
-                ActionMenuItemType.Back -> onBackPressed()
-                ActionMenuItemType.Settings -> onSettingsPressed()
+                // ActionMenuItemType.Back -> onBackPressed()
+                ActionMenuItemType.Login -> {
+                    showSnackBar(
+                        "SearchRentals: Clicked on ${button.name}",
+                        snackbarHostState,
+                        this
+                    )
+                }
+
+                ActionMenuItemType.Settings -> {
+                    onSettingsPressed()
+                    showSnackBar(
+                        "SearchRentals: Clicked on ${button.name}",
+                        snackbarHostState,
+                        this
+                    )
+                }
+
                 else -> {}
             }
         }?.launchIn(this)
     }
+    BackNavigationButton(appBarState, onBackPressed)
     Column(modifier = Modifier.fillMaxSize()) {
         SearchRow(filter, onFilterChanged = onFilterChanged)
         val collectedItems = pagingRentals.collectAsLazyPagingItems()

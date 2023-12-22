@@ -1,6 +1,7 @@
 package com.outdoorsy.interview.navigation
 
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -12,7 +13,7 @@ import com.outdoorsy.interview.ui.Action
 import com.outdoorsy.interview.ui.AppBarState
 import com.outdoorsy.interview.ui.ShowFullSizeCentered
 import com.outdoorsy.interview.ui.home.HomeScreen
-import com.outdoorsy.interview.ui.rental.details.RentalDetails
+import com.outdoorsy.interview.ui.rental.details.RentalDetailsScreen
 import com.outdoorsy.interview.ui.rentals.RentalsViewModel
 import com.outdoorsy.interview.ui.rentals.SearchRentals
 
@@ -21,7 +22,8 @@ fun OutdoorsyNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: AppNavigation = Home,
-    appBarState: AppBarState
+    appBarState: AppBarState,
+    snackbarHostState: SnackbarHostState
 ) {
     NavHost(
         modifier = modifier,
@@ -40,6 +42,7 @@ fun OutdoorsyNavHost(
             val filter = rentalsViewModel.filter.collectAsState().value
             SearchRentals(
                 appBarState = appBarState,
+                snackbarHostState = snackbarHostState,
                 filter = filter,
                 onFilterChanged = { newFilter ->
                     rentalsViewModel.filter.value = newFilter
@@ -60,6 +63,7 @@ fun OutdoorsyNavHost(
                 },
                 onSettingsPressed = {
                     println("Settings pressed...")
+
                 }
             )
         }
@@ -67,6 +71,7 @@ fun OutdoorsyNavHost(
         composable(route = Home.route) {
             HomeScreen(
                 appBarState = appBarState,
+                snackbarHostState = snackbarHostState,
                 onLoginClick = {
                     println("Login clicked...")
                 },
@@ -81,7 +86,13 @@ fun OutdoorsyNavHost(
 //            arguments = SingleRentalDetails.routeArguments
         ) { navBackStackEntry ->
             val rentalId = navBackStackEntry.arguments?.getString(SingleRentalDetails.rentalIdParam)
-            RentalDetails(rentalId)
+            RentalDetailsScreen(
+                appBarState = appBarState,
+                snackbarHostState = snackbarHostState,
+                rentalId,
+                onBackPressed = {
+                    navController.popBackStack()
+                })
         }
     }
 }

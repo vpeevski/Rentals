@@ -2,11 +2,16 @@ package com.outdoorsy.interview.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.outdoorsy.interview.navigation.AllRentals
 import com.outdoorsy.interview.navigation.Home
+import com.outdoorsy.interview.navigation.SingleRentalDetails
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -78,8 +83,51 @@ class RentalsScreenState : ScreenWithButtons() {
 
 }
 
+class RentalDetailsScreenState : ScreenWithButtons() {
+    override val route: String
+        get() = SingleRentalDetails.route
+    override val isTopBarVisible: Boolean
+        get() = true
+    override val navigationAction: ActionMenuItem
+        get() = ActionMenuItem.Back(
+            onClick = {
+                buttons.tryEmit(ActionMenuItemType.Back)
+            }
+        )
+    override val title: String?
+        get() = SingleRentalDetails.title
+
+    private var _favIcon by mutableStateOf(Icons.Default.FavoriteBorder)
+    override val actions: List<ActionMenuItem>
+        get() = listOf(
+            ActionMenuItem.AlwaysShown(
+                type = ActionMenuItemType.Favourites,
+                title = "Favourites",
+                onClick = {
+                    buttons.tryEmit(ActionMenuItemType.Favourites)
+                },
+                icon = _favIcon,
+                contentDescription = null,
+            ),
+            ActionMenuItem.AlwaysShown(
+                type = ActionMenuItemType.Login,
+                title = "Login",
+                onClick = {
+                    buttons.tryEmit(ActionMenuItemType.Login)
+                },
+                icon = Icons.Filled.Person,
+                contentDescription = null,
+            )
+        )
+
+    fun setFavIcon(icon: ImageVector) {
+        _favIcon = icon
+    }
+
+}
+
 enum class ActionMenuItemType {
-    Back, Forward, Login, Settings, None
+    Back, Forward, Login, Settings, Favourites, None
 }
 
 sealed interface ActionMenuItem {
@@ -124,9 +172,11 @@ sealed interface ActionMenuItem {
 //    kClass.objectInstance as ScreenState
 //}.firstOrNull { screenState -> screenState.route == route }
 
-fun screenForRoute(route: String?): ScreenWithButtons? = when (route) {
-    Home.route -> HomeScreenState()
-    AllRentals.route -> RentalsScreenState()
-//    SingleRentalDetails.route -> RentalDetailsScreenState
-    else -> null
+fun screenForRoute(route: String?): ScreenWithButtons? = route?.let {
+    when {
+        it == Home.route -> HomeScreenState()
+        it == AllRentals.route -> RentalsScreenState()
+        it.startsWith(SingleRentalDetails.route) -> RentalDetailsScreenState()
+        else -> null
+    }
 }

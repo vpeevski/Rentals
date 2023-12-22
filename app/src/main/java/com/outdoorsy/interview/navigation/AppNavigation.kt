@@ -28,6 +28,8 @@ object ErrorReload : AppNavigation {
 
 object SingleRentalDetails : AppNavigation {
     override val route: String = "rental-details"
+    override val title: String?
+        get() = "Rental details"
     const val rentalIdParam = "rental_id"
     val routeWithArguments = "$route/{$rentalIdParam}"
 //    val routeArguments = listOf(
