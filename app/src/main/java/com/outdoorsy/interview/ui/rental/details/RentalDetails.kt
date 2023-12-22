@@ -7,10 +7,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.outdoorsy.interview.navigation.BackNavigationButton
 import com.outdoorsy.interview.snackbar.showSnackBar
 import com.outdoorsy.interview.ui.ActionMenuItemType
@@ -21,12 +18,11 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun RentalDetailsScreen(
+    rentalDetailsViewModel: RentalDetailsViewModel = viewModel(),
     appBarState: AppBarState,
     snackbarHostState: SnackbarHostState,
-    rentalId: String?,
     onBackPressed: () -> Unit = {}
 ) {
-    var favEnabled by remember { mutableStateOf(false) }
     val screen = appBarState.currentScreen as? RentalDetailsScreenState
     LaunchedEffect(key1 = screen) {
         screen?.buttonsFlow?.onEach { button ->
@@ -41,8 +37,8 @@ fun RentalDetailsScreen(
                 }
 
                 ActionMenuItemType.Favourites -> {
-                    favEnabled = !favEnabled
-                    screen.setFavIcon(if (favEnabled) Icons.Default.Favorite else Icons.Filled.FavoriteBorder)
+                    rentalDetailsViewModel.toggleFavorite()
+                    screen.setFavIcon(if (rentalDetailsViewModel.isFavorite.value) Icons.Default.Favorite else Icons.Filled.FavoriteBorder)
                     showSnackBar(
                         "RentalDetails: Clicked on ${button.name}",
                         snackbarHostState,
@@ -56,7 +52,7 @@ fun RentalDetailsScreen(
     }
     BackNavigationButton(appBarState, onBackPressed)
 
-    rentalId?.let {
-        Text(text = "Single rental details, id: $rentalId")
+    rentalDetailsViewModel.rentalId?.let {
+        Text(text = "Single rental details, id: ${rentalDetailsViewModel.rentalId}")
     }
 }

@@ -85,11 +85,11 @@ fun OutdoorsyNavHost(
             route = SingleRentalDetails.routeWithArguments,
 //            arguments = SingleRentalDetails.routeArguments
         ) { navBackStackEntry ->
-            val rentalId = navBackStackEntry.arguments?.getString(SingleRentalDetails.rentalIdParam)
+            // val rentalId = navBackStackEntry.arguments?.getString(SingleRentalDetails.rentalIdParam)
             RentalDetailsScreen(
                 appBarState = appBarState,
                 snackbarHostState = snackbarHostState,
-                rentalId,
+                // rentalId = rentalId,
                 onBackPressed = {
                     navController.popBackStack()
                 })
