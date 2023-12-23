@@ -1,6 +1,7 @@
 package com.outdoorsy.interview.ui.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun HomeScreen(
     appBarState: AppBarState,
+    drawerState: DrawerState,
     snackbarHostState: SnackbarHostState,
     onLoginClick: () -> Unit = {},
     onSearchRentalsClick: () -> Unit = {}
@@ -27,6 +29,10 @@ fun HomeScreen(
                 ActionMenuItemType.Login -> {
                     onLoginClick()
                     showSnackBar("HomeScreen: Clicked on ${button.name}", snackbarHostState, this)
+                }
+
+                ActionMenuItemType.Drawer -> {
+                    drawerState.open()
                 }
 
                 else -> {}

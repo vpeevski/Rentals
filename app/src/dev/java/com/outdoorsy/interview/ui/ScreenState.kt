@@ -3,6 +3,7 @@ package com.outdoorsy.interview.ui
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.getValue
@@ -31,7 +32,9 @@ sealed class ScreenWithButtons : ScreenState {
 class HomeScreenState : ScreenWithButtons() {
     override val route: String = Home.route
     override val isTopBarVisible: Boolean = true
-    override val navigationAction: ActionMenuItem = ActionMenuItem.None
+    override val navigationAction: ActionMenuItem = ActionMenuItem.DrawerMenu(onClick = {
+        buttons.tryEmit(ActionMenuItemType.Drawer)
+    })
     override val title: String? = Home.title
     override val actions: List<ActionMenuItem> = listOf(
         ActionMenuItem.AlwaysShown(
@@ -123,11 +126,10 @@ class RentalDetailsScreenState : ScreenWithButtons() {
     fun setFavIcon(icon: ImageVector) {
         _favIcon = icon
     }
-
 }
 
 enum class ActionMenuItemType {
-    Back, Forward, Login, Settings, Favourites, None
+    Back, Forward, Drawer, Login, Settings, Favourites, None
 }
 
 sealed interface ActionMenuItem {
@@ -140,7 +142,7 @@ sealed interface ActionMenuItem {
     data class AlwaysShown(
         override val type: ActionMenuItemType,
         override val title: String,
-        override val onClick: (() -> Unit)?,
+        override val onClick: (() -> Unit)? = {},
         override val icon: ImageVector?,
         override val contentDescription: String?
     ) : ActionMenuItem
@@ -151,6 +153,14 @@ sealed interface ActionMenuItem {
         override val onClick: (() -> Unit)?,
         override val icon: ImageVector? = Icons.Filled.ArrowBack,
         override val contentDescription: String? = "Go to previous page"
+    ) : ActionMenuItem
+
+    data class DrawerMenu(
+        override val type: ActionMenuItemType = ActionMenuItemType.Drawer,
+        override val title: String = "Drawer",
+        override val onClick: (() -> Unit)?,
+        override val icon: ImageVector? = Icons.Default.Menu,
+        override val contentDescription: String? = "Show drawer"
     ) : ActionMenuItem
 
     object None : ActionMenuItem {

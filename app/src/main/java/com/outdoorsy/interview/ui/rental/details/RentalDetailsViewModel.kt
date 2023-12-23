@@ -22,4 +22,8 @@ class RentalDetailsViewModel @Inject constructor(
     fun toggleFavorite() {
         _isFavorite.value = !_isFavorite.value
     }
+
+    override fun onCleared() {
+        println("RentalDetailsViewModel Cleared !!!")
+    }
 }

@@ -1,6 +1,7 @@
 package com.outdoorsy.interview.navigation
 
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +24,7 @@ fun OutdoorsyNavHost(
     navController: NavHostController,
     startDestination: AppNavigation = Home,
     appBarState: AppBarState,
+    drawerState: DrawerState,
     snackbarHostState: SnackbarHostState
 ) {
     NavHost(
@@ -71,6 +73,7 @@ fun OutdoorsyNavHost(
         composable(route = Home.route) {
             HomeScreen(
                 appBarState = appBarState,
+                drawerState = drawerState,
                 snackbarHostState = snackbarHostState,
                 onLoginClick = {
                     println("Login clicked...")
