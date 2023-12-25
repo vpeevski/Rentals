@@ -99,7 +99,6 @@ dependencies {
 // Paging, Jetpack Compose integration
     implementation(libs.bundles.paging)
     implementation(libs.lifecycle)
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
@@ -108,6 +107,7 @@ dependencies {
 // Optional - Integration with activities
     implementation(libs.activity.compose)
     implementation(libs.activity.ktx)
+    implementation(libs.fragment.ktx)
 // Integration with ViewModels
     implementation(libs.lifecycle.viewmodel.compose)
 // Image processing

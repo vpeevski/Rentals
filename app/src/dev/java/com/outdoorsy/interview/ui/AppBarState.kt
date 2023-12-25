@@ -1,14 +1,18 @@
 package com.outdoorsy.interview.ui
 
+import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import com.outdoorsy.interview.navigation.Home
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +22,7 @@ import kotlinx.coroutines.flow.onEach
 // Properties are taken from current instance of screen state
 // through navController.
 class AppBarState(
-    navController: NavController,
+    val navController: NavController,
     scope: CoroutineScope
 ) {
 

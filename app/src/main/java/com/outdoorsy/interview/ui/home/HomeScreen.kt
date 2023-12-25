@@ -1,24 +1,23 @@
 package com.outdoorsy.interview.ui.home
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.outdoorsy.interview.snackbar.showSnackBar
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.outdoorsy.interview.ui.ActionMenuItemType
 import com.outdoorsy.interview.ui.AppBarState
-import com.outdoorsy.interview.ui.HomeScreenState
+import com.outdoorsy.interview.ui.MainViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun HomeScreen(
     appBarState: AppBarState,
-    drawerState: DrawerState,
-    snackbarHostState: SnackbarHostState,
+    mainViewModel: MainViewModel = hiltViewModel(LocalContext.current as ComponentActivity),
     onLoginClick: () -> Unit = {},
     onSearchRentalsClick: () -> Unit = {}
 ) {
@@ -28,11 +27,11 @@ fun HomeScreen(
             when (button) {
                 ActionMenuItemType.Login -> {
                     onLoginClick()
-                    showSnackBar("HomeScreen: Clicked on ${button.name}", snackbarHostState, this)
+                    mainViewModel.showSnackBar("HomeScreen: Clicked on ${button.name}", this)
                 }
 
                 ActionMenuItemType.Drawer -> {
-                    drawerState.open()
+                    mainViewModel.showDrawer(this)
                 }
 
                 else -> {}

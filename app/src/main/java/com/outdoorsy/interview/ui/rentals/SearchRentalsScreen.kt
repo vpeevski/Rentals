@@ -1,6 +1,7 @@
 package com.outdoorsy.interview.ui.rentals
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,7 +30,6 @@ import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -45,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -54,9 +53,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -67,11 +66,9 @@ import com.outdoorsy.interview.R
 import com.outdoorsy.interview.api.ErrorCode
 import com.outdoorsy.interview.navigation.BackNavigationButton
 import com.outdoorsy.interview.rentals.Rental
-import com.outdoorsy.interview.snackbar.showSnackBar
 import com.outdoorsy.interview.ui.ActionMenuItemType
 import com.outdoorsy.interview.ui.AppBarState
-import com.outdoorsy.interview.ui.HomeScreenState
-import com.outdoorsy.interview.ui.RentalsScreenState
+import com.outdoorsy.interview.ui.MainViewModel
 import com.outdoorsy.interview.ui.ShowFullSizeCentered
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,12 +77,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
 
-@OptIn(ExperimentalMaterial3Api::class)
 //@Preview
 @Composable
 fun SearchRentals(
+    mainViewModel: MainViewModel = viewModel(LocalContext.current as ComponentActivity),
     appBarState: AppBarState,
-    snackbarHostState: SnackbarHostState,
     filter: String = "",
     onFilterChanged: (String) -> Unit = {},
     onRentalClick: (String) -> Unit = {},
@@ -100,18 +96,16 @@ fun SearchRentals(
             when (button) {
                 // ActionMenuItemType.Back -> onBackPressed()
                 ActionMenuItemType.Login -> {
-                    showSnackBar(
+                    mainViewModel.showSnackBar(
                         "SearchRentals: Clicked on ${button.name}",
-                        snackbarHostState,
                         this
                     )
                 }
 
                 ActionMenuItemType.Settings -> {
                     onSettingsPressed()
-                    showSnackBar(
+                    mainViewModel.showSnackBar(
                         "SearchRentals: Clicked on ${button.name}",
-                        snackbarHostState,
                         this
                     )
                 }

@@ -23,9 +23,7 @@ fun OutdoorsyNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: AppNavigation = Home,
-    appBarState: AppBarState,
-    drawerState: DrawerState,
-    snackbarHostState: SnackbarHostState
+    appBarState: AppBarState
 ) {
     NavHost(
         modifier = modifier,
@@ -44,7 +42,6 @@ fun OutdoorsyNavHost(
             val filter = rentalsViewModel.filter.collectAsState().value
             SearchRentals(
                 appBarState = appBarState,
-                snackbarHostState = snackbarHostState,
                 filter = filter,
                 onFilterChanged = { newFilter ->
                     rentalsViewModel.filter.value = newFilter
@@ -70,11 +67,10 @@ fun OutdoorsyNavHost(
             )
         }
 
-        composable(route = Home.route) {
+        composable(route = Home.route) { navBackStackEntry ->
+            navBackStackEntry.viewModelStore
             HomeScreen(
                 appBarState = appBarState,
-                drawerState = drawerState,
-                snackbarHostState = snackbarHostState,
                 onLoginClick = {
                     println("Login clicked...")
                 },
@@ -91,7 +87,6 @@ fun OutdoorsyNavHost(
             // val rentalId = navBackStackEntry.arguments?.getString(SingleRentalDetails.rentalIdParam)
             RentalDetailsScreen(
                 appBarState = appBarState,
-                snackbarHostState = snackbarHostState,
                 // rentalId = rentalId,
                 onBackPressed = {
                     navController.popBackStack()
