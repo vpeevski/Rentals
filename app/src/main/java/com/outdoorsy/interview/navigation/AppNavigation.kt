@@ -12,18 +12,16 @@ object Home : AppNavigation {
         get() = "Outdoorsy home page"
 }
 
-object AllRentals : AppNavigation {
-    override val route: String = "all-rentals"
+object RentalsNavGraph : AppNavigation {
+    override val route: String = "rentals"
+    override val title: String?
+        get() = "Rentals"
+}
+
+object SearchRentals : AppNavigation {
+    override val route: String = "rentals-search"
     override val title: String?
         get() = "Search rentals"
-}
-
-object Loading : AppNavigation {
-    override val route: String = "loading"
-}
-
-object ErrorReload : AppNavigation {
-    override val route: String = "error-reload"
 }
 
 object SingleRentalDetails : AppNavigation {
@@ -35,4 +33,12 @@ object SingleRentalDetails : AppNavigation {
 //    val routeArguments = listOf(
 //        navArgument(rentalId) { type = NavType.StringType }
 //    )
+}
+
+object Loading : AppNavigation {
+    override val route: String = "loading"
+}
+
+object ErrorReload : AppNavigation {
+    override val route: String = "error-reload"
 }

@@ -19,7 +19,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
     }
 
     var drawerState: DrawerState = DrawerState(DrawerValue.Closed)
-    lateinit var snackbarHostState: SnackbarHostState
+    val snackbarHostState: SnackbarHostState = SnackbarHostState()
 
     private val _snackbarMessages = MutableStateFlow<String?>(null)
     val snackbarMessages: StateFlow<String?> = _snackbarMessages

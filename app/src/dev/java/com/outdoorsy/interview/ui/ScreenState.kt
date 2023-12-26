@@ -10,8 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.outdoorsy.interview.navigation.AllRentals
 import com.outdoorsy.interview.navigation.Home
+import com.outdoorsy.interview.navigation.SearchRentals
 import com.outdoorsy.interview.navigation.SingleRentalDetails
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -51,7 +51,7 @@ class HomeScreenState : ScreenWithButtons() {
 
 class RentalsScreenState : ScreenWithButtons() {
     override val route: String
-        get() = AllRentals.route
+        get() = SearchRentals.route
     override val isTopBarVisible: Boolean
         get() = true
     override val navigationAction: ActionMenuItem
@@ -61,7 +61,7 @@ class RentalsScreenState : ScreenWithButtons() {
             }
         )
     override val title: String?
-        get() = AllRentals.title
+        get() = SearchRentals.title
     override val actions: List<ActionMenuItem>
         get() = listOf(
             ActionMenuItem.AlwaysShown(
@@ -185,7 +185,7 @@ sealed interface ActionMenuItem {
 fun screenForRoute(route: String?): ScreenWithButtons? = route?.let {
     when {
         it == Home.route -> HomeScreenState()
-        it == AllRentals.route -> RentalsScreenState()
+        it == SearchRentals.route -> RentalsScreenState()
         it.startsWith(SingleRentalDetails.route) -> RentalDetailsScreenState()
         else -> null
     }

@@ -56,8 +56,6 @@ class MainActivity : ComponentActivity() {
     fun AppContent(mainViewModel: MainViewModel = viewModel()) {
         val navController = rememberNavController()
         val appBarState = rememberAppBarState(navController)
-        mainViewModel.drawerState = rememberDrawerState(DrawerValue.Closed)
-        mainViewModel.snackbarHostState = remember { SnackbarHostState() }
         ModalNavigationDrawer(
             drawerState = mainViewModel.drawerState,
             gesturesEnabled = mainViewModel.drawerState.isOpen,

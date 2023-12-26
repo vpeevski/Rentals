@@ -19,7 +19,7 @@ fun HomeScreen(
     appBarState: AppBarState,
     mainViewModel: MainViewModel = hiltViewModel(LocalContext.current as ComponentActivity),
     onLoginClick: () -> Unit = {},
-    onSearchRentalsClick: () -> Unit = {}
+    onRentalsClick: () -> Unit = {}
 ) {
     val screen = appBarState.currentScreen
     LaunchedEffect(key1 = screen) {
@@ -39,7 +39,7 @@ fun HomeScreen(
         }?.launchIn(this)
     }
     Text(modifier = Modifier.clickable {
-        onSearchRentalsClick()
+        onRentalsClick()
     }, text = "Search Rentals...")
 
 }
