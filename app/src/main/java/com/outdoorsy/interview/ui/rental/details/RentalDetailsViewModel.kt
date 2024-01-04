@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RentalDetailsViewModel @Inject constructor(
+
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _isFavorite = MutableStateFlow(false)

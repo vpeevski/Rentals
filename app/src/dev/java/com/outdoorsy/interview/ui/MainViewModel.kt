@@ -34,6 +34,12 @@ class MainViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun hideDrawer(coroutineScope: CoroutineScope) {
+        coroutineScope.launch {
+            drawerState.close()
+        }
+    }
+
     fun showSnackBar(
         text: String,
         scope: CoroutineScope

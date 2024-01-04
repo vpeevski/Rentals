@@ -1,14 +1,11 @@
 package com.outdoorsy.interview.ui.rental.details
 
-import androidx.activity.ComponentActivity
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.outdoorsy.interview.navigation.BackNavigationButton
 import com.outdoorsy.interview.ui.ActionMenuItemType
@@ -20,13 +17,14 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun RentalDetailsScreen(
-    mainViewModel: MainViewModel = viewModel(LocalContext.current as ComponentActivity),
+    mainViewModel: MainViewModel = viewModel(),
     rentalDetailsViewModel: RentalDetailsViewModel = viewModel(),
     appBarState: AppBarState,
     onBackPressed: () -> Unit = {}
 ) {
     val screen = appBarState.currentScreen as? RentalDetailsScreenState
     LaunchedEffect(key1 = screen) {
+        println("RentalDetailsScreen, mainViewModel: $mainViewModel")
         screen?.buttonsFlow?.onEach { button ->
             when (button) {
                 // ActionMenuItemType.Back -> onBackPressed()
