@@ -6,8 +6,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,13 +23,6 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     var drawerState: DrawerState = DrawerState(DrawerValue.Closed)
     val snackbarHostState: SnackbarHostState = SnackbarHostState()
-
-    private val _snackbarMessages = MutableStateFlow<String?>(null)
-    val snackbarMessages: StateFlow<String?> = _snackbarMessages
-
-    fun updateSnackbarMessage(message: String) {
-        _snackbarMessages.value = message
-    }
 
     fun showDrawer(coroutineScope: CoroutineScope) {
         coroutineScope.launch {

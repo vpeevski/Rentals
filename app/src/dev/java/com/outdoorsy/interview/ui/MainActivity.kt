@@ -36,15 +36,6 @@ class MainActivity : ComponentActivity() {
             OutdoorsyTheme(dynamicColor = false) {
                 AppContent(mainViewModel = mainViewModel)
             }
-            LaunchedEffect(key1 = mainViewModel.snackbarHostState) {
-                mainViewModel.snackbarMessages.collect { message ->
-                    message?.let {
-                        println(message)
-                        mainViewModel.showSnackBar(it, this)
-//                        showSnackBar(it, mainViewModel.snackbarHostState, this)
-                    }
-                }
-            }
         }
     }
 
@@ -65,7 +56,7 @@ class MainActivity : ComponentActivity() {
                             ActionMenuItem.AlwaysShown(
                                 type = ActionMenuItemType.Settings,
                                 onClick = {
-                                    mainViewModel.updateSnackbarMessage("Drawer: Settings Clicked..")
+                                    mainViewModel.showSnackBar("Drawer: Settings Clicked..", scope)
                                     mainViewModel.hideDrawer(scope)
                                 },
                                 title = "Settings",
@@ -75,7 +66,7 @@ class MainActivity : ComponentActivity() {
                             ActionMenuItem.AlwaysShown(
                                 type = ActionMenuItemType.Login,
                                 onClick = {
-                                    mainViewModel.updateSnackbarMessage("Drawer: Login Clicked..")
+                                    mainViewModel.showSnackBar("Drawer: Login Clicked..", scope)
                                     mainViewModel.hideDrawer(scope)
                                 },
                                 title = "Login",
