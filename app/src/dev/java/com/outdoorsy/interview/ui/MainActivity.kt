@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             OutdoorsyTheme(dynamicColor = false) {
-                AppContent_Break_Build(mainViewModel = mainViewModel)
+                AppContent(mainViewModel = mainViewModel)
             }
             LaunchedEffect(key1 = mainViewModel.snackbarHostState) {
                 mainViewModel.snackbarMessages.collect { message ->
