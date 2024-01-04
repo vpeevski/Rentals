@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 //            .commit()
         setContent {
             OutdoorsyTheme(dynamicColor = false) {
-                AppContent()
+                AppContent_Broken()
             }
         }
     }
