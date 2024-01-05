@@ -1,4 +1,5 @@
 import java.io.FileReader
+import java.util.Map.entry
 import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION")
@@ -153,9 +154,33 @@ val loadVersion = task("loadVersion") {
     version = readVersion(project.extra[versionFileKey] as File)
 }
 
+tasks.register("makeReleaseVersion") {
+    group = "versioning"
+    description = "Makes project a release version"
+    val projectVersion = version as ProjectVersion
+    inputs.property("release", projectVersion.release)
+    outputs.file(project.extra[versionFileKey] as File)
+    doLast {
+        logger.quiet("Make version to be for release !!!")
+        projectVersion.release = true
+        ant.withGroovyBuilder {
+            "propertyfile"("file" to project.extra[versionFileKey]) {
+                "entry"(
+                    "key" to "release",
+                    "type" to "string",
+                    "operation" to "=",
+                    "value" to "true"
+                )
+            }
+        }
+    }
+
+}
+
 val printVersionTask = task("printVersion") {
     group = "versioning"
     description = "Prints project version."
+    dependsOn(tasks.named("makeReleaseVersion"))
     doFirst {
         println("Printing project version...")
     }
@@ -190,7 +215,7 @@ fun readVersion(file: File): ProjectVersion {
 data class ProjectVersion(
     val major: Int,
     val minor: Int,
-    val release: Boolean = false
+    var release: Boolean = false
 ) {
     override fun toString(): String = "$major.$minor${if (release) "" else "-SNAPSHOT"}"
 }
