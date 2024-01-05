@@ -1,3 +1,6 @@
+import java.io.FileReader
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.com.android.application)
@@ -124,7 +127,7 @@ dependencies {
     androidTestImplementation(libs.hilt.testing)
     androidTestImplementation(libs.activity.ktx)
     androidTestImplementation("app.cash.turbine:turbine:0.12.1")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
     kaptAndroidTest(libs.hilt.android.compiler)
 
     // Compose testing dependencies
@@ -141,4 +144,53 @@ kotlin {
 // Allow references to generated code
 kapt {
     correctErrorTypes = true
+}
+
+val versionFileKey = "versionFile"
+project.extra[versionFileKey] = file("../version.properties")
+val loadVersion = task("loadVersion") {
+    logger.quiet("Loading version task...")
+    version = readVersion(project.extra[versionFileKey] as File)
+}
+
+val printVersionTask = task("printVersion") {
+    group = "versioning"
+    description = "Prints project version."
+    doFirst {
+        println("Printing project version...")
+    }
+    doLast {
+        // println("Version: $version")
+        logger.quiet("Version: $version")
+    }
+}
+
+val finalizerTask = task("finalizer") {
+    logger.quiet("FINALIZE TASK...")
+}
+printVersionTask.finalizedBy(finalizerTask)
+
+fun readVersion(file: File): ProjectVersion {
+    logger.quiet("Reading version file: ${file.path}")
+    if (!file.exists()) throw GradleException(
+        "Required version file does not exist: ${file.canonicalPath}"
+    )
+    val versionProps = Properties()
+    FileReader(file).use { reader ->
+        versionProps.load(reader)
+    }
+
+    return ProjectVersion(
+        versionProps.getProperty("major").toInt(),
+        versionProps.getProperty("minor").toInt(),
+        versionProps.getProperty("release").toBoolean()
+    )
+}
+
+data class ProjectVersion(
+    val major: Int,
+    val minor: Int,
+    val release: Boolean = false
+) {
+    override fun toString(): String = "$major.$minor${if (release) "" else "-SNAPSHOT"}"
 }
