@@ -1,6 +1,7 @@
 import java.io.FileReader
-import java.util.Map.entry
 import java.util.Properties
+import com.outdoorsy.interview.ProjectVersion
+import com.outdoorsy.interview.ReleaseVersionTask
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -154,9 +155,10 @@ val loadVersion = task("loadVersion") {
     version = readVersion(project.extra[versionFileKey] as File)
 }
 
-tasks.register("makeReleaseVersion") {
+tasks.register<ReleaseVersionTask>(name = "makeReleaseVersion") {
     group = "versioning"
     description = "Makes project a release version"
+    destFile = project.extra[versionFileKey] as File
     val projectVersion = version as ProjectVersion
     inputs.property("release", projectVersion.release)
     outputs.file(project.extra[versionFileKey] as File)
@@ -210,12 +212,4 @@ fun readVersion(file: File): ProjectVersion {
         versionProps.getProperty("minor").toInt(),
         versionProps.getProperty("release").toBoolean()
     )
-}
-
-data class ProjectVersion(
-    val major: Int,
-    val minor: Int,
-    var release: Boolean = false
-) {
-    override fun toString(): String = "$major.$minor${if (release) "" else "-SNAPSHOT"}"
 }
